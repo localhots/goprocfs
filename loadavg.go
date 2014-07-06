@@ -1,4 +1,4 @@
-package goprocfs
+package procfs
 
 import (
 	"fmt"

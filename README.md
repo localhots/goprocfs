@@ -1,3 +1,1 @@
-## goprocfs
-
-Go wrapper over procfs
+## Go wrapper over procfs
