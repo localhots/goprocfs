@@ -212,14 +212,14 @@ type ProcPidStat struct {
 
 func NewProcPidStat(pid int) ProcPidStat {
 	file := fmt.Sprintf("/proc/%d/stat", pid)
-	bytes, err := ioutil.ReadFile(file)
+	b, err := ioutil.ReadFile(file)
 	if err != nil {
 		panic(err)
 	}
 
 	p := ProcPidStat{}
 
-	parsed, err := fmt.Sscanf(string(bytes),
+	parsed, err := fmt.Sscanf(string(b),
 		"%d %s %s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d "+
 			"%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
 		&p.Pid, &p.Comm, &p.State, &p.Ppid, &p.Pgrp, &p.Session, &p.TtyNr,

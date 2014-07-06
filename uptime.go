@@ -13,15 +13,14 @@ type ProcUptime struct {
 }
 
 func NewProcUptime() ProcUptime {
-	file := fmt.Sprintf("/proc/uptime")
-	bytes, err := ioutil.ReadFile(file)
+	b, err := ioutil.ReadFile("/proc/uptime")
 	if err != nil {
 		panic(err)
 	}
 
 	p := ProcUptime{}
 
-	parsed, err := fmt.Sscanf(string(bytes), "%f %f", &p.Uptime, &p.Idle)
+	parsed, err := fmt.Sscanf(string(b), "%f %f", &p.Uptime, &p.Idle)
 	if parsed < 2 {
 		fmt.Println("Managed to parse only", parsed, "fields out of 2")
 	}

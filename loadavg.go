@@ -26,15 +26,14 @@ type ProcLoadavg struct {
 }
 
 func NewProcLoadavg() ProcLoadavg {
-	file := fmt.Sprintf("/proc/loadavg")
-	bytes, err := ioutil.ReadFile(file)
+	b, err := ioutil.ReadFile("/proc/loadavg")
 	if err != nil {
 		panic(err)
 	}
 
 	p := ProcLoadavg{}
 
-	parsed, err := fmt.Sscanf(string(bytes), "%f %f %f %d/%d %d",
+	parsed, err := fmt.Sscanf(string(b), "%f %f %f %d/%d %d",
 		&p.Avg1Min, &p.Avg5Min, &p.Avg15Min, &p.RunnableEntities,
 		&p.TotalEntities, &p.LastPid)
 	if parsed < 6 {

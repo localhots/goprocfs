@@ -19,14 +19,14 @@ type ProcPidStatm struct {
 
 func NewProcPidStatm(pid int) ProcPidStatm {
 	file := fmt.Sprintf("/proc/%d/statm", pid)
-	bytes, err := ioutil.ReadFile(file)
+	b, err := ioutil.ReadFile(file)
 	if err != nil {
 		panic(err)
 	}
 
 	p := ProcPidStatm{}
 
-	parsed, err := fmt.Sscanf(string(bytes), "%d %d %d %d %d %d %d",
+	parsed, err := fmt.Sscanf(string(b), "%d %d %d %d %d %d %d",
 		&p.Size, &p.Resident, &p.Share, &p.Text, &p.Lib, &p.Data, &p.Dt)
 
 	if parsed < 7 {

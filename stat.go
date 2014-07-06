@@ -30,15 +30,14 @@ type ProcStat struct {
 }
 
 func NewProcStat() ProcStat {
-	file := fmt.Sprintf("/proc/stat")
-	bytes, err := ioutil.ReadFile(file)
+	b, err := ioutil.ReadFile("/proc/stat")
 	if err != nil {
 		panic(err)
 	}
 
 	p := ProcStat{}
 
-	parsed, err := fmt.Sscanf(string(bytes), "cpu  %d %d %d %d %d %d %d %d %d %d",
+	parsed, err := fmt.Sscanf(string(b), "cpu  %d %d %d %d %d %d %d %d %d %d",
 		&p.Cpu.User, &p.Cpu.Nice, &p.Cpu.System, &p.Cpu.Idle, &p.Cpu.Iowait,
 		&p.Cpu.Irq, &p.Cpu.Softirq, &p.Cpu.Steal, &p.Cpu.Guest,
 		&p.Cpu.GuestNice)
