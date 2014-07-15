@@ -25,23 +25,24 @@ type ProcLoadavg struct {
 	LastPid uint
 }
 
-func NewProcLoadavg() ProcLoadavg {
+func NewProcLoadavg() (ProcLoadavg, error) {
+	p := ProcLoadavg{}
+
 	b, err := ioutil.ReadFile("/proc/loadavg")
 	if err != nil {
-		panic(err)
+		return p, err
 	}
-
-	p := ProcLoadavg{}
 
 	parsed, err := fmt.Sscanf(string(b), "%f %f %f %d/%d %d",
 		&p.Avg1Min, &p.Avg5Min, &p.Avg15Min, &p.RunnableEntities,
 		&p.TotalEntities, &p.LastPid)
 	if parsed < 6 {
-		fmt.Println("Managed to parse only", parsed, "fields out of 6")
+		err := fmt.Errorf("Managed to parse only %d fields out of 6", parsed)
+		return p, err
 	}
 	if err != nil {
-		panic(err)
+		return p, err
 	}
 
-	return p
+	return p, nil
 }

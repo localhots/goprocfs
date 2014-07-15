@@ -12,21 +12,22 @@ type ProcUptime struct {
 	Idle   float64 // Time spent in idle process in seconds
 }
 
-func NewProcUptime() ProcUptime {
+func NewProcUptime() (ProcUptime, error) {
+	p := ProcUptime{}
+
 	b, err := ioutil.ReadFile("/proc/uptime")
 	if err != nil {
-		panic(err)
+		return p, err
 	}
-
-	p := ProcUptime{}
 
 	parsed, err := fmt.Sscanf(string(b), "%f %f", &p.Uptime, &p.Idle)
 	if parsed < 2 {
-		fmt.Println("Managed to parse only", parsed, "fields out of 2")
+		err := fmt.Errorf("Managed to parse only %d fields out of 2", parsed)
+		return p, err
 	}
 	if err != nil {
-		panic(err)
+		return p, err
 	}
 
-	return p
+	return p, nil
 }

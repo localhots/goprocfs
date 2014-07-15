@@ -210,14 +210,14 @@ type ProcPidStat struct {
 	CguestTime int32
 }
 
-func NewProcPidStat(pid int) ProcPidStat {
+func NewProcPidStat(pid int) (ProcPidStat, error) {
+	p := ProcPidStat{}
+
 	file := fmt.Sprintf("/proc/%d/stat", pid)
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
-		panic(err)
+		return p, err
 	}
-
-	p := ProcPidStat{}
 
 	parsed, err := fmt.Sscanf(string(b),
 		"%d %s %s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d "+
@@ -231,11 +231,12 @@ func NewProcPidStat(pid int) ProcPidStat {
 		&p.Nswap, &p.Cnswap, &p.ExitSignal, &p.Processor, &p.RtPriority,
 		&p.Policy, &p.DelayacctBlkioTicks, &p.GuestTime, &p.CguestTime)
 	if parsed < 44 {
-		fmt.Println("Managed to parse only", parsed, "fields out of 44")
+		err := fmt.Errorf("Managed to parse only %d fields out of 44", parsed)
+		return p, err
 	}
 	if err != nil {
-		panic(err)
+		return p, err
 	}
 
-	return p
+	return p, nil
 }

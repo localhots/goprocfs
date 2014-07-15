@@ -29,24 +29,25 @@ type ProcStat struct {
 	}
 }
 
-func NewProcStat() ProcStat {
+func NewProcStat() (ProcStat, error) {
+	p := ProcStat{}
+
 	b, err := ioutil.ReadFile("/proc/stat")
 	if err != nil {
-		panic(err)
+		return p, err
 	}
-
-	p := ProcStat{}
 
 	parsed, err := fmt.Sscanf(string(b), "cpu  %d %d %d %d %d %d %d %d %d %d",
 		&p.Cpu.User, &p.Cpu.Nice, &p.Cpu.System, &p.Cpu.Idle, &p.Cpu.Iowait,
 		&p.Cpu.Irq, &p.Cpu.Softirq, &p.Cpu.Steal, &p.Cpu.Guest,
 		&p.Cpu.GuestNice)
 	if parsed < 10 {
-		fmt.Println("Managed to parse only", parsed, "fields out of 10")
+		err := fmt.Errorf("Managed to parse only %d fields out of 10", parsed)
+		return p, err
 	}
 	if err != nil {
-		panic(err)
+		return p, err
 	}
 
-	return p
+	return p, nil
 }

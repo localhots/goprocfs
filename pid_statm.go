@@ -17,24 +17,25 @@ type ProcPidStatm struct {
 	Dt       uint64 // Dirty pages (unused in Linux 2.6)
 }
 
-func NewProcPidStatm(pid int) ProcPidStatm {
+func NewProcPidStatm(pid int) (ProcPidStatm, error) {
+	p := ProcPidStatm{}
+
 	file := fmt.Sprintf("/proc/%d/statm", pid)
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
-		panic(err)
+		return p, err
 	}
-
-	p := ProcPidStatm{}
 
 	parsed, err := fmt.Sscanf(string(b), "%d %d %d %d %d %d %d",
 		&p.Size, &p.Resident, &p.Share, &p.Text, &p.Lib, &p.Data, &p.Dt)
 
 	if parsed < 7 {
-		fmt.Println("Managed to parse only", parsed, "fields out of 7")
+		err := fmt.Errorf("Managed to parse only %d fields out of 7", parsed)
+		return p, err
 	}
 	if err != nil {
-		panic(err)
+		return p, err
 	}
 
-	return p
+	return p, nil
 }
